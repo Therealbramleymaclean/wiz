@@ -21,7 +21,7 @@ function drawCreator() {
     <p class="lede">You wake in a shack you do not remember arriving at. Some things are already true of you.</p>
 
     <h2>Your name</h2>
-    <input class="nm" placeholder="What they will call you" value="${c.name.replace(/"/g, '&quot;')}" oninput="createSet('name',this.value)">
+    <input class="nm" placeholder="What they will call you" value="${c.name.replace(/"/g, '&quot;')}" onblur="createSet('name',this.value)">
 
     <h2>Where the shack stands</h2>
     ${START_LOCATIONS.map(l => `<button class="loc ${c.location===l.id?'on':''}" onclick="createSet('location','${l.id}')">
