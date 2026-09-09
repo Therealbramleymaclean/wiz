@@ -34,14 +34,15 @@ function simulate(s, dtReal) {
   /* Search cooldown uses real time, not sped-up time. */
   if (s.searchCd > 0) { s.searchCd -= dtReal; if (s.searchCd < 0) s.searchCd = 0; }
 
-  /* Someone on the stair? */
+  /* Someone on the stair? When struggle is full, the caller is you. */
   if (!s.supplicant) {
     s.knockIn -= dt;
     if (s.knockIn <= 0) {
-      s.supplicant = nextCaller();
+      const isConsume = s.struggle >= STRUGGLE_MAX;
+      s.supplicant = isConsume ? { ...CONSUME } : nextCaller();
       s.used = 0; s.asked = []; s.said = []; s.orbUsed = false;
       s.knockIn = callerWait();
-      note('Someone is on the stair.');
+      note(isConsume ? 'The stair creaks. It is you. Younger.' : 'Someone is on the stair.');
       dirty();
     }
   }
@@ -54,6 +55,9 @@ function simulate(s, dtReal) {
     note(`\u2014 the builder at Town will take the work. ${nx.coin} coin.`);
     dirty();
   }
+
+  /* Peak renown safety net. */
+  if (s.rep > s.peakRep) s.peakRep = s.rep;
 
   return s;
 }

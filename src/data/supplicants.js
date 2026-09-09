@@ -1,3 +1,15 @@
+/* The consume: a caller who shouldn't be able to — you, younger.
+   Their trouble has one answer. Not a regular supplicant; the sim injects
+   this when struggle hits the threshold. */
+const CONSUME = {
+  who: 'You. Younger. The face you had before the years got into it.',
+  trouble: 'consume',
+  keeps: 'you',
+  ask: 'You are standing on your own stair, looking up at the rooms you have built, the shelf full, the notebook thick. You have not slept. You say: \u201cI know what this is. I have done it before, or I will, and I cannot keep doing it.\u201d',
+  when: 'It is the weight of it. The requests. The ones that outrun you.',
+  tried: 'You have tried every arrangement of it',
+};
+
 /* Who comes up the stair. Each entry pairs a caller with the trouble they bring. */
 const SUPPLICANTS = [
   { who: 'A widow from the low village', trouble: 'sleeplessness', keeps: 'widow',

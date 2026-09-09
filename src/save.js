@@ -5,7 +5,14 @@ const SAVE_KEY = 'wiz.tower.save';
 /* Migrations, keyed by the save version they upgrade FROM.
    Add an entry for each S.version bump (e.g. 9: s => { … } for v9→v10). */
 const MIGRATIONS = {
-  /* 9: v9 is the first saved version — nothing to do yet. */
+  /* 9: v9→v10 — prestige fields didn't exist; seed them with safe defaults. */
+  9: s => {
+    if (typeof s.peakRep !== 'number') s.peakRep = s.rep || 0;
+    if (!Array.isArray(s.discovered)) s.discovered = [];
+    if (typeof s.struggle !== 'number') s.struggle = 0;
+    if (typeof s.lives !== 'number') s.lives = 1;
+    if (s.keepsake === undefined) s.keepsake = null;
+  },
 };
 
 function saveGame() {

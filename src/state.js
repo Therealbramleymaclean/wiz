@@ -1,6 +1,6 @@
 /* The one mutable object the game runs on. Everything else reads S. */
 let S = {
-  version: 9,
+  version: 10,
   setup: false,
   page: 'door',
   name: '',
@@ -23,10 +23,18 @@ let S = {
   used: 0, asked: [], said: [],
   rumours: [], outcome: null,
   workFilter: 'all',
-  /* v10 prestige, reserved now so the save schema doesn't change when it lands:
-     legacy = the points a life weighs in; skills = what survives the forgetting. */
+  /* v10 prestige.
+     legacy  = the points a life weighs in (computed, not stored — recalculated at consume).
+     skills  = what survives the forgetting (bought with legacy, persistent).
+     peakRep = highest renown reached this life (feeds legacy).
+     discovered = base material ids ever encountered (feeds legacy). */
   legacy: 0,
   skills: [],
+  peakRep: 0,
+  discovered: [],
+  struggle: 0,
+  lives: 1,
+  keepsake: null,
   log: [],
   lastUpdate: Date.now(),
 };

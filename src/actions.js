@@ -183,7 +183,7 @@ window.buyFix = k => {
 
 /* Bench. */
 window.place = id => {
-  if (S.bench.length >= 3 || !S.shelf[id]) return;
+  if (S.bench.length >= benchCap() || !S.shelf[id]) return;
   S.shelf[id]--; if (!S.shelf[id]) delete S.shelf[id];
   S.bench.push(id); renderAll();
 };
@@ -215,7 +215,7 @@ window.autofill = () => {
   ids.sort((a, b) => sc(b) - sc(a));
   const covered = new Set();
   for (const id of ids) {
-    if (S.bench.length >= 3) break;
+    if (S.bench.length >= benchCap()) break;
     const adds = rev.filter(n => knownTags(id).includes(n) && !covered.has(n));
     if (!adds.length) continue;
     S.shelf[id]--; if (!S.shelf[id]) delete S.shelf[id];
@@ -282,6 +282,7 @@ window.turnAway = () => {
     : `You turned ${sp.keeps} away. No renown to lose, but it was not kind.`);
   S.supplicant = null; S.used = 0; S.asked = []; S.said = []; S.orbUsed = false;
   S.knockIn = callerWait();
+  S.struggle = Math.min(STRUGGLE_MAX, S.struggle + 1);
   renderAll();
 };
 
@@ -305,7 +306,11 @@ window.answer = () => {
     });
   });
   S.rep += TIERS_ANS[t].rep;
+  bumpPeak();
   S.coin += TIERS_ANS[t].coin;
+  /* Struggle: failures stack, successes drain. */
+  const delta = { dismissed: 1, adequate: 0, talked: -1, remembered: -2 }[t] || 0;
+  S.struggle = Math.max(0, Math.min(STRUGGLE_MAX, S.struggle + delta));
   let name = null;
   if (t === 'remembered') {
     name = `The ${cap(sp.keeps)}\u2019s ${NOUN[parseId(pick(used)).b]}`;
@@ -328,5 +333,95 @@ window.answer = () => {
     : `The ${sp.keeps}: ${t}. +${TIERS_ANS[t].rep} renown.`);
   S.bench = []; S.supplicant = null; S.used = 0; S.asked = []; S.said = []; S.orbUsed = false;
   S.knockIn = callerWait();
+  renderAll();
+};
+
+/* The consume: the prestige reset. You, younger, are let in.
+   What survives: name, kit, legacy, skills, location.
+   What goes: everything else. The tower comes down room by room. */
+window.doConsume = () => {
+  if (!S.supplicant || S.supplicant.trouble !== 'consume') return;
+
+  /* Weigh the life before it is gone. */
+  const legacy = legacyScore();
+
+  /* The teardown. Room by room, the way it was built. */
+  const roomNames = S.rooms.map(r => ROOM_FN[r.fn] ? ROOM_FN[r.fn].name.toLowerCase() : 'bare room');
+  const log = [];
+  log.push('The door opens. You stand in your own doorway and let the older you in.');
+  for (let i = S.rooms.length - 1; i >= 0; i--) {
+    log.push(`The ${roomNames[i]} comes down.`);
+  }
+  log.push('The shelf empties into the air. The coin, the renown, the notebook — ash.');
+  log.push(`You weigh ${legacy} in the end. That is what it was.`);
+  log.push(`You are young again. Life ${S.lives + 1}.`);
+  if (S.skills.length) {
+    log.push(`What survives: your name, your kit, ${S.skills.length} skill${S.skills.length === 1 ? '' : 's'}.`);
+  } else {
+    log.push('What survives: your name, your kit, and the legacy.');
+  }
+
+  /* The wipe. */
+  const keepMat = hasSkill('keepsake') && S.keepsake ? S.keepsake : null;
+  S.rep = 0; S.coin = 6; S.insight = 0;
+  S.shelf = {}; S.bench = [];
+  /* Waking Room: the one room you start with is already a study. */
+  const startFn = hasSkill('waking_room') ? 'study' : 'empty';
+  S.rooms = [{ floor: 0, fn: startFn, fixture: null, sown: null, grown: 0 }];
+  if (keepMat) S.shelf[keepMat] = 1;
+  S.ups = []; S.tierIx = 0; S.tierOffered = false;
+  S.troubles = []; S.lore = {}; S.readBooks = [];
+  S.activeBook = null; S.bookProg = 0;
+  S.procN = 0; S.procBooks = {};
+  S.doing = null;
+  S.searchAt = null; S.lastFind = ''; S.searchCd = 0;
+  S.supplicant = null; S.knockIn = 0.5 * MIN;
+  S.trickle = 0; S.broomT = 0;
+  S.used = 0; S.asked = []; S.said = [];
+  S.rumours = []; S.outcome = null;
+  S.workFilter = 'all';
+  S.transSel = []; S.orbUsed = false;
+  S.peakRep = 0; S.discovered = [];
+  S.struggle = 0;
+  S.lives += 1;
+  S.legacy = legacy;
+  S.page = 'door';
+  S.log = log.reverse(); /* newest first, as the log is read */
+
+  dirty();
+  renderAll();
+};
+
+/* Buy a skill with legacy. Once bought, it survives forever. */
+window.buySkill = id => {
+  const sk = skillDef(id);
+  if (!sk || S.skills.includes(id) || S.legacy < sk.cost) return;
+  S.legacy -= sk.cost;
+  S.skills.push(id);
+  if (id === 'keepsake' && !S.keepsake) S.keepsake = Object.keys(S.shelf)[0] || null;
+  note(`You buy ${sk.name}. It will be there when the forgetting comes.`);
+  renderAll();
+};
+
+/* Set the keepsake material (one survives the consume). */
+window.setKeepsake = id => {
+  S.keepsake = id || null;
+  renderAll();
+};
+
+/* Send the younger you back. You choose to keep going. Struggle resets;
+   it will build again if the requests keep outrunning you. */
+window.sendBack = () => {
+  if (!S.supplicant || S.supplicant.trouble !== 'consume') return;
+  S.supplicant = null;
+  S.struggle = 0;
+  S.knockIn = callerWait();
+  S.outcome = {
+    cls: '', name: null,
+    line: 'You close the door. You can still hear them on the stair, then not.',
+    detail: 'You will keep going. For now.',
+    gained: '',
+  };
+  note('You sent them back. The stair is quiet.');
   renderAll();
 };

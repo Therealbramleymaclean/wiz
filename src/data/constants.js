@@ -14,3 +14,5 @@ const SEARCH_CD_MS = 1000;
 const OFFLINE_CAP = 24 * 3600 * 1000;
 const INTUIT_COST = 3;
 const BASE_STORE = 14;
+/* Struggle threshold: the consume appears when this many net failures stack up. */
+const STRUGGLE_MAX = 4;

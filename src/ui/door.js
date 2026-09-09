@@ -1,9 +1,25 @@
-/* The Door page — receive a caller, put things on the bench, answer. */
+/* The Door page — receive a caller, put things on the bench, answer.
+   The consume is rendered as a distinct scene: no bench, no actions, just the choice. */
 function pageDoor() {
   let h = '';
 
   if (!S.supplicant) {
     h += `<div class="door quiet"><p class="asks">The stair is empty. Somebody will come.</p></div>`;
+  } else if (S.supplicant.trouble === 'consume') {
+    /* The consume scene. */
+    const sp = S.supplicant;
+    h += `<div class="door" style="border-color:var(--candle)">
+      <div class="who">${sp.who}</div>
+      <p class="asks">${sp.ask}</p>
+      <p class="asks" style="margin-top:8px;opacity:.7">${sp.when}</p>
+    </div>
+    <div class="acts" style="margin-top:14px">
+      <button class="go" onclick="doConsume()">The consume</button>
+      <button class="ghost" onclick="sendBack()">Send them back</button>
+    </div>`;
+    h += `<h2>What has been happening</h2><div class="logbox">
+      <ol>${S.log.slice(0, 12).map(l => `<li>${l}</li>`).join('')}</ol></div>`;
+    return h;
   } else {
     const sp = S.supplicant, mx = maxActions(), mod = [2,1,0,-1][S.used];
     const say = [
@@ -15,7 +31,7 @@ function pageDoor() {
     h += `<div class="door"><div class="who">${sp.who}</div><p class="asks">${sp.ask}</p></div>
       <div class="clock"><span class="pips">${
         Array.from({ length: mx }, (_, i) =>
-          `<span class="pip ${i < S.used ? 'spent' : ''} ${i === 3 ? 'bonus' : ''}"></span>`
+          `<span class="pip ${i < S.used ? 'spent' : ''} ${i === 3 ? 'bonus' : ''}</span>`
         ).join('')
       }</span>
         <span>${leftAct()} of ${mx} left</span>
@@ -41,8 +57,9 @@ function pageDoor() {
     h += S.said.map(s => `<p class="said">${s}</p>`).join('');
   }
 
-  h += '<h2>On the bench</h2><div class="bench">';
-  for (let i = 0; i < 3; i++) {
+  h += `<h2>On the bench</h2><div class="bench">`;
+  const bc = benchCap();
+  for (let i = 0; i < bc; i++) {
     const id = S.bench[i];
     h += id
       ? `<button class="slot full" style="border-left:3px solid var(${item(id).col})" onclick="unplace(${i})">${
@@ -60,7 +77,7 @@ function pageDoor() {
   </div>`;
 
   h += '<div id="outcomeWrap">' + outcomeHTML() + '</div>';
-  h += '<h2>Things you have to hand</h2>' + shelfHTML(id => `place('${id}')`, S.bench.length >= 3);
+  h += '<h2>Things you have to hand</h2>' + shelfHTML(id => `place('${id}')`, S.bench.length >= benchCap());
   h += `<h2>What has been happening</h2><div class="logbox">
     <button class="ghost" style="margin:0 0 6px 0" onclick="clearLog()">Clear</button>
     <ol>${S.log.map(l => `<li>${l}</li>`).join('')}</ol></div>`;

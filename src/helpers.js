@@ -8,6 +8,10 @@ const bk = id => S.procBooks[id] || BOOKS.find(b => b.id === id);
 
 /* Knowledge queries. */
 const knows      = t  => S.troubles.includes(t);
+
+/* Skill queries. */
+const hasSkill   = id => S.skills.includes(id);
+const skillDef   = id => SKILLS.find(s => s.id === id);
 const knownTags  = id => S.lore[parseId(id).b] || [];
 const needsOf    = () => S.supplicant ? TROUBLES[S.supplicant.trouble].needs : [];
 
@@ -19,6 +23,7 @@ const held       = () => Object.values(S.shelf).reduce((a, b) => a + b, 0);
 const maxActions = () => 3;
 const leftAct    = () => maxActions() - S.used;
 const combineN   = () => hasFix('bellows') ? 4 : 5;
+const benchCap   = () => 3 + (hasSkill('extra_hands') ? 1 : 0);
 
 /* The builder's price for the next room: scales with everything built so far. */
 const roomCost   = () => Math.round(20 * Math.pow(1.35, Math.max(0, S.rooms.length) - 1));
@@ -56,12 +61,27 @@ function readMin(b) {
   let m = b.min;
   if (roomsWith('study').length) m *= 0.67;
   if (hasFix('stand'))           m *= 0.75;
+  if (hasSkill('quick_study'))   m *= 0.67;
   return m;
 }
 function give(id, n = 1) {
   if (held() >= storeCap()) return false;
   S.shelf[id] = (S.shelf[id] || 0) + n;
+  /* Track first-encounter for legacy; Keen Eye auto-learns the first tag. */
+  const b = parseId(id).b;
+  if (!S.discovered.includes(b)) {
+    S.discovered.push(b);
+    if (hasSkill('keen_eye')) {
+      const base = BASE.find(m => m.id === b);
+      if (base && !S.lore[b]) S.lore[b] = [base.tags[0]];
+    }
+  }
   return true;
+}
+
+/* Legacy: what a life weighs in. Sums the tunable term table. */
+function legacyScore() {
+  return LEGACY_TERMS.reduce((sum, t) => sum + t.weight * t.get(S), 0);
 }
 function note(s) {
   S.log.unshift(s);
@@ -95,6 +115,11 @@ function kitDescriptor(kit = S.kit, includeBody = true) {
   if (heldItems.length) out += ' with ' + heldItems.map(art).join(' and ');
   if (includeBody && BODY_N[body]) out += ', in ' + BODY_N[body];
   return out;
+}
+
+/* Peak renown tracking — called after any rep change. */
+function bumpPeak() {
+  if (S.rep > S.peakRep) S.peakRep = S.rep;
 }
 
 /* Nav dots — a dot means "you could be doing something here and aren't". */

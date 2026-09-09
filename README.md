@@ -46,6 +46,13 @@ Any push to `main` is picked up by GitHub Pages automatically. In repo settings:
 
 ## Versions
 
+- **v10** — prestige: the consume, legacy, skills, keepsake.
+  At a struggle threshold, a younger version of you arrives on your own stair.
+  Their trouble has one answer. The consume pulls everything — shelf, coin,
+  renown, rooms (the tower comes down room by room), notebook. What survives:
+  your name, your kit, your legacy, your skills, your location.
+  Legacy is spent on five permanent skills (Quick Study, Keen Eye, Extra Hands,
+  A Room Already Yours, The Keepsake). Re-offers each life.
 - **v9** — character creator, tier progression (shack → cottage → tower → spire),
   Town replaces Books, Notebook reworked, Search cooldown, Workshop combine batching,
   turn-away costs renown, nav dots for idle tracks.

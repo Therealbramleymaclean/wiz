@@ -22,7 +22,7 @@ function drawStatus() {
 
   const dots = navDots();
   $('madlib').textContent = S.name
-    ? `${S.name}, ${kitDescriptor()}, in a ${tier().madlibNoun} at ${(START_LOCATIONS.find(l => l.id === S.location) || {}).name || 'no place in particular'}.`
+    ? `${S.name}, ${kitDescriptor()}, in a ${tier().madlibNoun} at ${(START_LOCATIONS.find(l => l.id === S.location) || {}).name || 'no place in particular'}.${S.lives > 1 ? ` Life ${S.lives}.` : ''}`
     : '';
 
   $('nav').innerHTML = PAGES.map(([k, n]) => {
