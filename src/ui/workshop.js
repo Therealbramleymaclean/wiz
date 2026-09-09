@@ -39,6 +39,7 @@ function pageWork() {
         <button onclick="qty('${id}',-1)">\u2212</button>
         <input id="q_${id}" type="number" min="1" max="${maxBatches}" value="1" onchange="qtySet('${id}',this.value)">
         <button onclick="qty('${id}',1)">+</button>
+        ${maxBatches > 1 ? `<button style="font-size:10px" onclick="qtyMax('${id}')">max</button>` : ''}
       </div>
       <button class="go" onclick="doCombine('${id}')">Combine</button></div>`;
   }).join('') : '<p class="empty-txt">Nothing you have ' + N + ' of yet.</p>';

@@ -28,12 +28,13 @@ function pageDoor() {
       'Thorough.',
       'They have been here half the afternoon.',
     ][S.used];
+    let pips = '';
+    for (let i = 0; i < mx; i++) {
+      const cls = (i < S.used ? 'spent' : '') + (i < S.used && i === mx - 1 ? ' bonus' : '');
+      pips += '<span class="pip' + (cls ? ' ' + cls : '') + '"></span>';
+    }
     h += `<div class="door"><div class="who">${sp.who}</div><p class="asks">${sp.ask}</p></div>
-      <div class="clock"><span class="pips">${
-        Array.from({ length: mx }, (_, i) =>
-          `<span class="pip ${i < S.used ? 'spent' : ''} ${i === 3 ? 'bonus' : ''}</span>`
-        ).join('')
-      }</span>
+      <div class="clock"><span class="pips">${pips}</span>
         <span>${leftAct()} of ${mx} left</span>
         <span class="judged ${mod < 0 ? 'bad' : ''}">${say}${mod ? ' (' + (mod > 0 ? '+' : '') + mod + ')' : ''}</span></div>`;
 
@@ -69,9 +70,9 @@ function pageDoor() {
   h += '</div>';
 
   const n = S.bench.length, ready = n >= 1 && S.supplicant;
+  const bonus = n === 1 ? ' \u2014 one thing (+2)' : n === 2 ? ' \u2014 two things (+1)' : '';
   h += `<div>
-    <button class="go" onclick="answer()" ${ready ? '' : 'disabled'}>Give them what you have made${
-      n === 1 ? ' \u2014 one thing (+2)' : n === 2 ? ' \u2014 two things (+1)' : ''}</button>
+    <button class="go" onclick="answer()" ${ready ? '' : 'disabled'}>Give them what you have made${bonus}</button>
     <button class="ghost" onclick="autofill()" ${S.supplicant ? '' : 'disabled'}>Reach for the obvious things</button>
     ${n ? '<button class="ghost" onclick="clearBench()">Put it back</button>' : ''}
   </div>`;
@@ -80,6 +81,6 @@ function pageDoor() {
   h += '<h2>Things you have to hand</h2>' + shelfHTML(id => `place('${id}')`, S.bench.length >= benchCap());
   h += `<h2>What has been happening</h2><div class="logbox">
     <button class="ghost" style="margin:0 0 6px 0" onclick="clearLog()">Clear</button>
-    <ol>${S.log.map(l => `<li>${l}</li>`).join('')}</ol></div>`;
+    <ol>${S.log.slice(0, 10).map(l => `<li>${l}</li>`).join('')}</ol></div>`;
   return h;
 }

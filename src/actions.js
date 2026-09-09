@@ -110,6 +110,11 @@ window.qtySet = (id, v) => {
   n = Math.max(1, Math.min(max, n));
   el.value = n;
 };
+window.qtyMax = id => {
+  const el = $('q_' + id); if (!el) return;
+  const have = S.shelf[id] || 0;
+  el.value = Math.max(1, Math.floor(have / combineN()));
+};
 window.doCombine = id => {
   const N = combineN();
   const el = $('q_' + id);
@@ -309,7 +314,7 @@ window.answer = () => {
   bumpPeak();
   S.coin += TIERS_ANS[t].coin;
   /* Struggle: failures stack, successes drain. */
-  const delta = { dismissed: 1, adequate: 0, talked: -1, remembered: -2 }[t] || 0;
+  const delta = { dismissed: 1, adequate: 1, talked: -1, remembered: -2 }[t] || 0;
   S.struggle = Math.max(0, Math.min(STRUGGLE_MAX, S.struggle + delta));
   let name = null;
   if (t === 'remembered') {

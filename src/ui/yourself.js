@@ -49,11 +49,12 @@ function pageSelf() {
 
   h += '<h2>What people say about you</h2>';
   h += S.rumours.length
-    ? S.rumours.map(r => `<div class="rum">
+    ? S.rumours.slice(0, 5).map(r => `<div class="rum">
         <div class="t">${r.name}</div>
         <div class="d">${r.drift}</div>
         <div class="m">${TROUBLES[r.trouble].label.toLowerCase()} &middot; made from ${r.from}</div>
       </div>`).join('')
+      + (S.rumours.length > 5 ? `<p style="font-family:var(--sans);font-size:11px;color:var(--dim);margin-top:6px">+ ${S.rumours.length - 5} more, drifting further from the truth.</p>` : '')
       + '<p style="font-family:var(--sans);font-size:11px;color:var(--dim);margin-top:14px">What you are known for decides who climbs the stairs.</p>'
     : '<p class="empty-txt">Nobody has anything to say about you yet.</p>';
 
