@@ -5,13 +5,12 @@ function pageDoor() {
   if (!S.supplicant) {
     h += `<div class="door quiet"><p class="asks">The stair is empty. Somebody will come.</p></div>`;
   } else {
-    const sp = S.supplicant, mx = maxActions(), mod = [2,1,0,-1,-1][S.used];
+    const sp = S.supplicant, mx = maxActions(), mod = [2,1,0,-1][S.used];
     const say = [
       'You have not kept them waiting.',
       'Brisk.',
       'Thorough.',
       'They have been here half the afternoon.',
-      'They are getting up.',
     ][S.used];
     h += `<div class="door"><div class="who">${sp.who}</div><p class="asks">${sp.ask}</p></div>
       <div class="clock"><span class="pips">${
@@ -38,7 +37,7 @@ function pageDoor() {
       <button class="q" onclick="ask('tried')"  ${spent('tried')||none?'disabled':''}>&ldquo;What have you tried?&rdquo;</button>
       ${S.kit.lhand==='orb' ? `<button class="q free" onclick="orb()" ${S.orbUsed||!unk?'disabled':''}>Look into the orb (free)</button>` : ''}
       <button class="q insight" onclick="intuit()" ${S.insight<INTUIT_COST||!unk?'disabled':''}>Simply know it (${INTUIT_COST}i, free)</button>
-      <button class="q turn"    onclick="turnAway()">Turn them away &mdash; -1 renown</button></div>`;
+      <button class="q turn"    onclick="turnAway()">Turn them away &mdash; ${S.rep > 0 ? '&minus;1 renown' : 'they will remember it'}</button></div>`;
     h += S.said.map(s => `<p class="said">${s}</p>`).join('');
   }
 

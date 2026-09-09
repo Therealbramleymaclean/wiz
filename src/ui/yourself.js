@@ -28,5 +28,6 @@ function pageSelf() {
       + '<p style="font-family:var(--sans);font-size:11px;color:var(--dim);margin-top:14px">What you are known for decides who climbs the stairs.</p>'
     : '<p class="empty-txt">Nobody has anything to say about you yet.</p>';
 
+  h += '<div style="margin-top:34px;opacity:.75"><button class="ghost" onclick="startOver()">Start over &mdash; forget it all</button></div>';
   return h;
 }

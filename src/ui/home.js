@@ -44,7 +44,7 @@ function pageTower() {
             ).join('')
           }</select>`;
         if (r.sown) {
-          inner += `<div class="bar" style="margin-top:6px"><i style="width:${(r.grown/T.grow*100).toFixed(1)}%"></i></div>`;
+          inner += `<div class="bar" style="margin-top:6px"><i id="gbar${ix}" style="width:${Math.min(100, r.grown/T.grow*100).toFixed(1)}%"></i></div>`;
         }
       }
       if (fits.length) {

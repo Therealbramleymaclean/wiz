@@ -18,11 +18,11 @@ function pageTown() {
   h += '<h2>The builder</h2>';
   const cap = roomCap(), used = S.rooms.length, room = cap - used;
   if (room > 0) {
-    /* Room cost scales with how many you already have this tier. */
+    /* The builder's price scales with everything you have built so far. */
     const t = tier();
-    const roomCost = Math.round(20 * Math.pow(1.35, used - 1));
-    h += `<button class="item buy" onclick="commissionRoom()" ${S.coin<roomCost?'disabled':''}>
-      <span class="price ${S.coin<roomCost?'no':''}">${roomCost}c</span>Another room in the ${t.name}
+    const cost = roomCost();
+    h += `<button class="item buy" onclick="commissionRoom()" ${S.coin<cost?'disabled':''}>
+      <span class="price ${S.coin<cost?'no':''}">${cost}c</span>Another room in the ${t.name}
       <span>Room for ${room} more before the ${t.name} is full. Placed on the lowest floor with space.</span></button>`;
   } else {
     h += '<p class="empty-txt">The ' + tier().name + ' is at its full size. The builder shrugs.</p>';

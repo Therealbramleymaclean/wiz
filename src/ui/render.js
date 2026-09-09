@@ -55,6 +55,15 @@ function renderTick() {
     const bar = $('occbar');
     if (bar) bar.style.width = (S.doing.elapsed / S.doing.dur * 100).toFixed(1) + '%';
   }
+  if (S.page === 'tower') {
+    /* Garden growth bars advance without a full re-render. */
+    S.rooms.forEach((r, ix) => {
+      if (r.fn === 'garden' && r.sown) {
+        const bar = $('gbar' + ix);
+        if (bar) bar.style.width = Math.min(100, r.grown / T.grow * 100).toFixed(1) + '%';
+      }
+    });
+  }
   if (S.page === 'search') {
     const bar = $('cdbar'), txt = $('cdtxt'), btn = $('tapbtn');
     if (bar) {

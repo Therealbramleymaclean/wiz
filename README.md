@@ -13,11 +13,12 @@ wiz/
 ├── src/
 │   ├── data/           ← pure data: materials, books, tiers, kit…
 │   ├── state.js        ← the mutable game state `S`
+│   ├── save.js         ← save / resume (localStorage, versioned)
 │   ├── helpers.js      ← small pure helpers reused everywhere
 │   ├── sim.js          ← the tick loop
 │   ├── ui/             ← one file per page + shared fragments + render
 │   ├── actions.js      ← every player action (attached to window.*)
-│   └── boot.js         ← show creator or resume, start tick
+│   └── boot.js         ← resume or creator, start tick, autosave
 ```
 
 All files are plain `<script>`s (no ES modules), so you can open `index.html`
@@ -27,6 +28,9 @@ matters and is commented there.
 ## Local development
 
 Just open `index.html` in a browser. That's it.
+
+Progress autosaves to the browser's `localStorage` (every few seconds, and when
+you close the tab). Use **Start over** on the Yourself page to begin again.
 
 If you later switch to `<script type="module">` you'll need a local server:
 

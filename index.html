@@ -5,7 +5,7 @@
 
 <link rel="stylesheet" href="./styles.css">
 
-<div id="creator-mount"></div>
+<div id="creator-mount" class="creator"></div>
 <div class="status" id="stbar" hidden>
   <div class="in" id="status"></div>
   <div class="madlib" id="madlib"></div>
@@ -14,8 +14,8 @@
 <div class="page" id="page" hidden></div>
 
 <!--
-  Load order matters. Data first, then state, then helpers, then sim,
-  then page renderers, then the render dispatcher, then actions,
+  Load order matters. Data first, then state, then save, then helpers,
+  then sim, then page renderers, then the render dispatcher, then actions,
   then the character creator, then boot.
 -->
 <script src="./src/data/constants.js"></script>
@@ -29,6 +29,7 @@
 <script src="./src/data/supplicants.js"></script>
 
 <script src="./src/state.js"></script>
+<script src="./src/save.js"></script>
 <script src="./src/helpers.js"></script>
 <script src="./src/sim.js"></script>
 

@@ -5,10 +5,9 @@ const ROOM_FN = {
   stores:  { name: 'Store room',   desc: 'Room for ten more things.' },
   garden:  { name: 'Glasshouse',   desc: 'Grows one herb you choose.' },
   work:    { name: 'Workshop',     desc: 'Opens the workshop.' },
-  parlour: { name: 'A parlour',    desc: 'Callers sit for a fourth action.' },
 };
 const FIXTURES = {
-  broom:   { name: 'The broom',    fits: ['empty','study','parlour'], cost: 30,
+  broom:   { name: 'The broom',    fits: ['empty','study'], cost: 30,
              desc: 'Sweeps by itself. A little insight, always.' },
   hoe:     { name: 'The hoe',      fits: ['garden'],                  cost: 36,
              desc: 'Three from the bed instead of two.' },

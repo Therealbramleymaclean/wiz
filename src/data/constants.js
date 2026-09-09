@@ -10,5 +10,7 @@ const T = {
   broom: 5 * MIN,
 };
 const SEARCH_CD_MS = 1000;
+/* Offline catch-up: at most a day of sim time, no matter how long you were away. */
+const OFFLINE_CAP = 24 * 3600 * 1000;
 const INTUIT_COST = 3;
 const BASE_STORE = 14;

@@ -46,7 +46,7 @@ const CURIOS = [
     name: 'A stick that looks like a wand',
     desc: 'It isn\u2019t. But it looks like one. Held in the right hand.' },
   { id: 'book',  kind: 'book', val: 'h1',
-    name: 'A herbal, water-stained',
+    name: 'A water-stained herbal',
     desc: 'Left in a drawer by whoever was here before. Yours to read.' },
   { id: 'mat',   kind: 'mat',  val: 'lens',
     name: 'A cracked lens',

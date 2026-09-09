@@ -16,9 +16,12 @@ const roomsWith  = fn => S.rooms.filter(r => r.fn === fn);
 const hasFix     = f  => S.rooms.some(r => r.fixture === f);
 const storeCap   = () => BASE_STORE + roomsWith('stores').length * 10;
 const held       = () => Object.values(S.shelf).reduce((a, b) => a + b, 0);
-const maxActions = () => 3 + (roomsWith('parlour').length ? 1 : 0);
+const maxActions = () => 3;
 const leftAct    = () => maxActions() - S.used;
 const combineN   = () => hasFix('bellows') ? 4 : 5;
+
+/* The builder's price for the next room: scales with everything built so far. */
+const roomCost   = () => Math.round(20 * Math.pow(1.35, Math.max(0, S.rooms.length) - 1));
 
 /* Formatting and tier queries. */
 const mins = ms => ms < MIN
@@ -77,10 +80,11 @@ function makeProcBook() {
   return b;
 }
 
-/* Kit descriptor used by the live status madlib. */
-function kitDescriptor() {
+/* Kit descriptor for the madlib. Shared by the live status bar and the
+   creator preview; pass a kit and includeBody:false for the creator's sentence. */
+function kitDescriptor(kit = S.kit, includeBody = true) {
   const parts = [];
-  const { head, body, lhand, rhand } = S.kit;
+  const { head, body, lhand, rhand } = kit;
   if (HEAD_ADJ[head]) parts.push(HEAD_ADJ[head]);
   parts.push('wizard');
   const heldItems = [];
@@ -89,7 +93,7 @@ function kitDescriptor() {
   let out = 'the ' + parts.join(' ');
   const art = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
   if (heldItems.length) out += ' with ' + heldItems.map(art).join(' and ');
-  if (BODY_N[body])     out += ', in ' + BODY_N[body];
+  if (includeBody && BODY_N[body]) out += ', in ' + BODY_N[body];
   return out;
 }
 

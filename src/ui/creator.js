@@ -13,7 +13,7 @@ function drawCreator() {
   const locChosen = START_LOCATIONS.find(l => l.id === c.location);
   const curioChosen = CURIOS.find(x => x.id === c.curio);
   const madlibLine = locChosen && c.name && curioChosen
-    ? `${c.name}, ${kitDescriptorFor(c.kit)}, arriving at ${locChosen.name} with ${curioChosen.name.toLowerCase()}.`
+    ? `${c.name}, ${kitDescriptor(c.kit, false)}, arriving at ${locChosen.name} with ${curioChosen.name.toLowerCase()}.`
     : 'Fill in the pieces below.';
 
   let h = `<div class="in">
@@ -45,20 +45,6 @@ function drawCreator() {
     <button class="go begin" onclick="beginGame()" ${(c.name && c.location && c.curio) ? '' : 'disabled'}>Open your eyes</button>
   </div>`;
   $('creator-mount').innerHTML = h;
-}
-
-/* Preview version of the madlib — reads from CREATE, not S. */
-function kitDescriptorFor(kit) {
-  const parts = [];
-  if (HEAD_ADJ[kit.head]) parts.push(HEAD_ADJ[kit.head]);
-  parts.push('wizard');
-  const heldItems = [];
-  if (HAND_N[kit.lhand]) heldItems.push(HAND_N[kit.lhand]);
-  if (HAND_N[kit.rhand]) heldItems.push(HAND_N[kit.rhand]);
-  let out = 'the ' + parts.join(' ');
-  const art = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
-  if (heldItems.length) out += ' with ' + heldItems.map(art).join(' and ');
-  return out;
 }
 
 window.createSet = (k, v) => { CREATE[k] = v; drawCreator(); };

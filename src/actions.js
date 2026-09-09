@@ -71,15 +71,14 @@ window.setKit = (k, v) => { S.kit[k] = v; renderAll(); };
 window.commissionRoom = () => {
   const cap = roomCap();
   if (S.rooms.length >= cap) return;
-  const used = S.rooms.length;
-  const roomCost = Math.round(20 * Math.pow(1.35, used - 1));
-  if (S.coin < roomCost) return;
+  const cost = roomCost();
+  if (S.coin < cost) return;
   const t = tier();
   let placedFloor = 0;
   for (let f = 0; f < t.floors; f++) {
     if (S.rooms.filter(r => r.floor === f).length < t.roomsPerFloor) { placedFloor = f; break; }
   }
-  S.coin -= roomCost;
+  S.coin -= cost;
   S.rooms.push({ floor: placedFloor, fn: 'empty', fixture: null, sown: null, grown: 0 });
   note(`The builder raises another room on floor ${placedFloor + 1}. Wood-smell for a week.`);
   renderAll();
@@ -199,6 +198,11 @@ window.clearBench = () => {
 };
 window.clearOutcome = () => { S.outcome = null; renderAll(); };
 window.clearLog     = () => { S.log = []; renderAll(); };
+window.startOver    = () => {
+  if (!confirm('Start over? This game will be forgotten.')) return;
+  clearSave();
+  location.reload();
+};
 
 /* Autofill — the "reach for the obvious things" ghost button. */
 window.autofill = () => {
@@ -268,10 +272,14 @@ window.turnAway = () => {
   S.outcome = {
     cls: 'turned', name: null,
     line: `You do not open the door. ${sp.who} waits, then goes back down the stair.`,
-    detail: `\u22121 renown. Word travels. It is not the good kind.`,
+    detail: lost
+      ? '\u22121 renown. Word travels. It is not the good kind.'
+      : 'There is no renown to lose. They go down the stair quietly, and you think about it afterwards.',
     gained: '',
   };
-  note(`You turned ${sp.keeps} away. \u22121 renown.`);
+  note(lost
+    ? `You turned ${sp.keeps} away. \u22121 renown.`
+    : `You turned ${sp.keeps} away. No renown to lose, but it was not kind.`);
   S.supplicant = null; S.used = 0; S.asked = []; S.said = []; S.orbUsed = false;
   S.knockIn = callerWait();
   renderAll();

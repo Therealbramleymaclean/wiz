@@ -23,6 +23,10 @@ let S = {
   used: 0, asked: [], said: [],
   rumours: [], outcome: null,
   workFilter: 'all',
+  /* v10 prestige, reserved now so the save schema doesn't change when it lands:
+     legacy = the points a life weighs in; skills = what survives the forgetting. */
+  legacy: 0,
+  skills: [],
   log: [],
   lastUpdate: Date.now(),
 };
